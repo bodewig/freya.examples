@@ -1,6 +1,6 @@
 ﻿//----------------------------------------------------------------------------
 //
-// Copyright (c) 2014
+// Copyright (c) 2016
 //
 //    Ryan Riley (@panesofglass) and Andrew Cherry (@kolektiv)
 //
@@ -72,11 +72,11 @@ let tuple x y =
    It saves having to use (freya { ... }) in multiple places within the
    computation expression, which can reduce duplication and help readability. *)
 
-let en = Freya.init [ LanguageTag.Parse "en" ]
+let en = LanguageTag.parse "en"
 
-let json = Freya.init [ MediaType.Json ]
+let json = MediaType.Json
 
-let utf8 = Freya.init [ Charset.Utf8 ]
+let utf8 = Charset.Utf8
 
 (* Request Body Helper
 
@@ -95,7 +95,7 @@ let readStream (x: Stream) =
 
 let readBody =
     freya {
-        let! body = Freya.Lens.get Request.Body_
+        let! body = Freya.Optic.get Request.body_
         return! Freya.fromAsync readStream body }
 
 let inline body () =
@@ -114,8 +114,8 @@ let inline body () =
 
 let inline represent x =
     { Description =
-        { Charset = Some Charset.Utf8
+        { Charset = Some utf8
           Encodings = None
-          MediaType = Some MediaType.Json
-          Languages = Some [ LanguageTag.Parse "en" ] }
+          MediaType = Some json
+          Languages = Some [ en ] }
       Data = (Json.serialize >> Json.format >> Encoding.UTF8.GetBytes) x }

@@ -1,6 +1,6 @@
 ﻿//----------------------------------------------------------------------------
 //
-// Copyright (c) 2014
+// Copyright (c) 2016
 //
 //    Ryan Riley (@panesofglass) and Andrew Cherry (@kolektiv)
 //
@@ -21,23 +21,21 @@
 module Freya.TodoBackend.Program
 
 open Freya.Core
+open Suave
 open Suave.Logging
-open Suave.Web
-open Suave.Types
+open Suave.Operators
 open Suave.Owin
+open Suave.Web
 
-// Suave
-
-let config =
-    { defaultConfig with
-        bindings = [ HttpBinding.mk' HTTP "0.0.0.0" 7000 ]
-        logger = Loggers.saneDefaultsFor LogLevel.Verbose }
- 
- // Main
- 
 [<EntryPoint>]
 let main _ =
-    printfn "Listening on port 7000"
-    let owin = OwinApp.ofAppFunc "/" (OwinAppFunc.ofFreya Freya.TodoBackend.Api.api)
+    let config =
+        { defaultConfig with
+            bindings = [ HttpBinding.mkSimple HTTP "0.0.0.0" 7000 ]
+            logger = Loggers.saneDefaultsFor LogLevel.Verbose }
+     
+    let owin =
+        OwinApp.ofAppFunc "/" (OwinAppFunc.ofFreya Freya.TodoBackend.Api.api)
+
     startWebServer config owin
     0
