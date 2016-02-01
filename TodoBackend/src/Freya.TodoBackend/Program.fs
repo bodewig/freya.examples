@@ -21,52 +21,49 @@
 module Freya.TodoBackend.Program
 
 open System
-open global.Owin
-open Microsoft.Owin.Hosting
+
+// Freya
+
 open Freya.Core
+
+let app =
+    OwinAppFunc.ofFreya Api.api
+
+// Katana
+
+open Microsoft.Owin.Hosting
+
+type Katana () =
+    member __.Configuration () =
+        app
+
+let katana () =
+    WebApp.Start<Katana> "http://localhost:7000"
+
+// Suave
+
 open Suave
 open Suave.Logging
-open Suave.Operators
 open Suave.Owin
 open Suave.Web
 
-(* Katana
-   Katana (Owin Self Hosting) expects us to expose a type with a specific
-   method. Freya lets us do see easily, the OwinAppFunc module providing
-   functions to turn any Freya<'a> function in to a suitable value for
-   OWIN compatible hosts such as Katana. *)
+let config =
+    { defaultConfig with
+        bindings = [ HttpBinding.mkSimple HTTP "127.0.0.1" 7000 ]
+        logger = Loggers.saneDefaultsFor LogLevel.Verbose }
 
-type TodoBackend () =
-    member __.Configuration () =
-        OwinAppFunc.ofFreya Api.todoRoutes
+let suave () =
+    startWebServer config (OwinApp.ofAppFunc "/" app)
 
-(* Main
-   A very simple program, simply a console app, with a blocking read from
-   the console to keep our server from shutting down immediately. Though
-   we are self hosting here as a console application, the same application
-   should be easily transferrable to any OWIN compatible server, including
-   IIS. *)
+// Main
 
 [<EntryPoint>]
 let main _ =
-    // Katana
-    let url = "http://localhost:7000"
-    let app = WebApp.Start<TodoBackend> url
-    printfn "Listening on %s" url
-    printfn "Press <enter> to stop"
-    let _ = System.Console.ReadLine ()
-    app.Dispose()
 
-    (*
-    // Suave
-    let config =
-        { defaultConfig with
-            bindings = [ HttpBinding.mkSimple HTTP "127.0.0.1" 7000 ]
-            logger = Loggers.saneDefaultsFor LogLevel.Verbose }
-     
-    let owin =
-        OwinApp.ofAppFunc "/" (OwinAppFunc.ofFreya Freya.TodoBackend.Api.api)
+    // Comment out as appropriate!
 
-    startWebServer config owin
-    *)
+    let _ = katana ()
+    //let _ = suave ()
+    let _ = Console.ReadLine ()
+
     0

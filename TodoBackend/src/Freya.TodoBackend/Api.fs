@@ -23,7 +23,6 @@ module Freya.TodoBackend.Api
 open System
 open Arachne.Http
 open Arachne.Http.Cors
-open Arachne.Uri.Template
 open Freya.Core
 open Freya.Machine
 open Freya.Machine.Extensions.Http
@@ -119,7 +118,7 @@ let addAction =
         let! _ = add
         return () }
 
-let addedHandler _ =
+let addedHandler =
     freya {
         let! todo = add
         return represent todo }
@@ -134,12 +133,12 @@ let deleteAction =
         let! _ = delete
         return () }
 
-let getHandler _ =
+let getHandler =
     freya {
         let! todo = get
         return represent todo }
 
-let listHandler _ =
+let listHandler =
     freya {
         let! todos = list
         return represent todos }
@@ -199,8 +198,8 @@ let todo =
 
 let todoRoutes =
     freyaRouter {
-        resource (UriTemplate.parse "/") todos
-        resource (UriTemplate.parse "/{id}") todo }
+        resource "/" todos
+        resource "/{id}" todo }
 
 (* API
 

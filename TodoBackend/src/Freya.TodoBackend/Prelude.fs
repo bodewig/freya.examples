@@ -91,8 +91,8 @@ let utf8 = Charset.Utf8
 let readBody =
     freya {
         let! stream = Freya.Optic.get Request.body_
-        use reader = new StreamReader(stream)
-        return reader.ReadToEnd() }
+        use reader = new StreamReader (stream)
+        return reader.ReadToEnd () }
 
 let inline body () =
     freya {
