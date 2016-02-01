@@ -88,15 +88,11 @@ let utf8 = Charset.Utf8
    function below, which (following from Chiron) uses static inference to
    determine the type of return value needed. *)
 
-let readStream (x: Stream) =
-    use reader = new StreamReader (x)
-    reader.ReadToEndAsync()
-    |> Async.AwaitTask
-
 let readBody =
     freya {
-        let! body = Freya.Optic.get Request.body_
-        return! Freya.fromAsync readStream body }
+        let! stream = Freya.Optic.get Request.body_
+        use reader = new StreamReader(stream)
+        return reader.ReadToEnd() }
 
 let inline body () =
     freya {
