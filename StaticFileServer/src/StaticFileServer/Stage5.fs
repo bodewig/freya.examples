@@ -20,8 +20,8 @@ let readFile (file: FileInfo) =
 // Response
 
 let fileTypes =
-    [ ".jpg", MediaType.Parse "image/jpeg"
-      ".png", MediaType.Parse "image/png"
+    [ ".jpg", MediaType.parse "image/jpeg"
+      ".png", MediaType.parse "image/png"
       ".json", MediaType.Json
       ".txt",  MediaType.Text ] |> Map.ofList
 
@@ -37,7 +37,7 @@ let represent (spec: Specification) x =
 // Freya
 
 let path =
-    Freya.memo (Freya.Lens.get Request.Path_)
+    Freya.memo (Freya.Optic.get Request.path_)
 
 let fileInfo =
     Freya.memo (getFileInfo <!> path)
@@ -65,10 +65,10 @@ let mediaTypesConfiguration =
 
 // Resources
 
-let files : FreyaPipeline =
+let files =
     freyaMachine {
         including defaults
         mediaTypesSupported mediaTypesConfiguration
         //lastModified lastModifiedConfiguration
         exists existsDecision
-        handleOk fileHandler } |> FreyaMachine.toPipeline
+        handleOk fileHandler }

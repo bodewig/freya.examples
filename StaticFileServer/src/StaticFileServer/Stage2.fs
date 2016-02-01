@@ -15,6 +15,6 @@ let readFile (file: FileInfo) =
 
 // Resources
 
-let files : FreyaPipeline =
+let files =
     freyaMachine {
-        including defaults } |> FreyaMachine.toPipeline
+        including defaults }

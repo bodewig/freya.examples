@@ -29,7 +29,7 @@ let represent _ x =
 // Freya
 
 let path =
-    Freya.memo (Freya.Lens.get Request.Path_)
+    Freya.memo (Freya.Optic.get Request.path_)
 
 let fileInfo =
     Freya.memo (getFileInfo <!> path)
@@ -47,8 +47,8 @@ let fileHandler n =
 
 // Resources
 
-let files : FreyaPipeline =
+let files =
     freyaMachine {
         including defaults
         exists existsDecision
-        handleOk fileHandler } |> FreyaMachine.toPipeline
+        handleOk fileHandler }

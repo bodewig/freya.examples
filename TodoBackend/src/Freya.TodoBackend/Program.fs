@@ -31,7 +31,7 @@ open Suave.Web
 let main _ =
     let config =
         { defaultConfig with
-            bindings = [ HttpBinding.mkSimple HTTP "0.0.0.0" 7000 ]
+            bindings = [ HttpBinding.mkSimple HTTP "127.0.0.1" 7000 ]
             logger = Loggers.saneDefaultsFor LogLevel.Verbose }
      
     let owin =

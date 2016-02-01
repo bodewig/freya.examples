@@ -5,6 +5,6 @@ open Freya.Machine
 
 // Resources
 
-let files : FreyaPipeline =
+let files =
     freyaMachine {
-        including defaults } |> FreyaMachine.toPipeline
+        including defaults }
